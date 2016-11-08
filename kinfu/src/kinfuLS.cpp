@@ -343,6 +343,16 @@ class ImageSubscriber
     }
 
     m_has_image = false;
+
+    // print parameters to make sure all are correct
+    if(true)
+    {
+      ROS_INFO("prefix_topic              : %s", prefix_topic.c_str());
+      ROS_INFO("depth_image_topic         : %s", depth_image_topic.c_str());
+      ROS_INFO("camera_info_topic         : %s", camera_info_topic.c_str());
+      ROS_INFO("image_topic               : %s", image_topic.c_str());
+      ROS_INFO("enable_texture_extraction : %d", enable_texture_extraction);
+    }
   }
 
   ~ImageSubscriber()
@@ -630,7 +640,7 @@ struct KinFuLSApp
     /*
      *      [fx  0 cx]
      * K = 	[ 0 fy cy]
-     * 		[ 0  0  1]
+     * 		  [ 0  0  1]
      */
     (*kinfu_).setDepthIntrinsics(cameraInfo->K[0], cameraInfo->K[4],
     		cameraInfo->K[2], cameraInfo->K[5]);
@@ -826,9 +836,11 @@ int main(int argc, char* argv[])
   nh.getParam(PARAM_NAME_SHIFT_DISTANCE, shift_distance);
   nh.getParam(PARAM_SNAME_SHIFT_DISTANCE, shift_distance);
 
-  double depth_height = PARAM_DEFAULT_DEPTH_HEIGHT, depth_width = PARAM_DEFAULT_DEPTH_WIDTH;
-  nh.getParam(PARAM_NAME_DEPTH_HEIGHT,depth_height);
-  nh.getParam(PARAM_NAME_DEPTH_WIDTH,depth_width);
+//  double depth_height = PARAM_DEFAULT_DEPTH_HEIGHT, depth_width = PARAM_DEFAULT_DEPTH_WIDTH;
+//  nh.getParam(PARAM_NAME_DEPTH_HEIGHT,depth_height);
+//  nh.getParam(PARAM_NAME_DEPTH_WIDTH,depth_width);
+  uint depth_height = (uint)nh.param<int>(PARAM_NAME_DEPTH_HEIGHT, PARAM_DEFAULT_DEPTH_HEIGHT);
+  uint depth_width = (uint)nh.param<int>(PARAM_NAME_DEPTH_WIDTH, PARAM_DEFAULT_DEPTH_WIDTH);
 
   KinFuLSApp app(volume_size, shift_distance, nh, depth_height, depth_width);
 
@@ -855,6 +867,19 @@ int main(int argc, char* argv[])
   nh.getParam(PARAM_NAME_EXTRACT_FRONTIER_POINTS,extract_frontier_points);
   if (extract_frontier_points)
     app.enableExtractFrontierPoints();
+
+  // print parameters to make sure all are correct
+  if(true)
+  {
+    ROS_INFO("volume_size               : %f", volume_size);
+    ROS_INFO("shift_distance            : %f", shift_distance);
+    ROS_INFO("size                      : (%u, %u)", depth_height, depth_width);
+    ROS_INFO("snapshot_rate             : %d", snapshot_rate);
+    ROS_INFO("enable_texture_extraction : %d", enable_texture_extraction);
+    ROS_INFO("extract_known_points      : %d", extract_known_points);
+    ROS_INFO("extract_border_points     : %d", extract_border_points);
+    ROS_INFO("extract_frontier_points   : %d", extract_frontier_points);
+  }
 
   // start app main thread
   app.start();
