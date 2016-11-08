@@ -208,6 +208,9 @@ namespace pcl
 
         static int get_result_size(int & data_transfer_finished)
         {
+          // TODO either because cudaMemcpyFromSymbol or the way of calling is wrong,
+          // overestimated,subtraction are both "set" to 0 at the end of this function
+          // degug this part
           int overestimated,subtraction;
           cudaSafeCall ( cudaMemcpyFromSymbol (&overestimated, overestimated_global_count, sizeof(overestimated)) );
           cudaSafeCall ( cudaMemcpyFromSymbol (&subtraction, global_count_subtraction, sizeof(subtraction)) );
