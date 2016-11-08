@@ -54,6 +54,12 @@ add_dependencies(kinfu_output kinfu_msgs_generate_messages_cpp)
 #############
 ## Install ##
 #############
+# added by tongxi lou(lou@magazino.eu)
+install(TARGETS kinfu_output
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 #############
 ## Testing ##

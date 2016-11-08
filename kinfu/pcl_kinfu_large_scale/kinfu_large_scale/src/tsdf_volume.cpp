@@ -56,7 +56,7 @@ pcl::gpu::kinfuLS::TsdfVolume::TsdfVolume(const Vector3i& resolution) : resoluti
   int volume_z = resolution_(2);
 
   volume_.create (volume_y * volume_z, volume_x);
-  
+
   const Vector3f default_volume_size = Vector3f::Constant (3.f); //meters
   const float    default_tranc_dist  = 0.03f; //meters
 
@@ -64,7 +64,7 @@ pcl::gpu::kinfuLS::TsdfVolume::TsdfVolume(const Vector3i& resolution) : resoluti
   setTsdfTruncDist(default_tranc_dist);
 
   reset();
-  
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

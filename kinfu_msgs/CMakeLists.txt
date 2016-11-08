@@ -26,14 +26,14 @@ add_message_files(
     KinfuTsdfResponse.msg
     KinfuPose.msg
     KinfuCameraIntrinsics.msg
-  )
+)
 
 add_action_files(
   DIRECTORY
     action
   FILES
     Request.action
-  )
+)
 
 generate_messages(
   DEPENDENCIES
@@ -42,7 +42,7 @@ generate_messages(
   geometry_msgs
   actionlib_msgs
   pcl_msgs
-  )
+)
 
 ###################################
 ## catkin specific configuration ##

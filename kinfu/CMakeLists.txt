@@ -56,7 +56,10 @@ include_directories(
   ${Eigen_INCLUDE_DIRS}
 )
 
-link_directories(${PCL_LIBRARY_DIRS})
+link_directories(
+  ${PCL_LIBRARY_DIRS}
+  pcl_kinfu_large_scale
+)
 
 if (${KINFU_CONFIGURED})
   add_executable(kinfu
@@ -77,12 +80,24 @@ if (${KINFU_CONFIGURED})
     ${catkin_LIBRARIES}
     ${KinfuLargeScale_LIBRARIES}
     ${Eigen_LIBRARIES}
+    KinfuLargeScaleCPP
+    KinfuLargeScaleCUDA
   )
 endif()
 
 #############
 ## Install ##
 #############
+# added by tongxi lou(lou@magazino.eu)
+install(TARGETS kinfu
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+install(DIRECTORY
+  launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 
 #############
 ## Testing ##

@@ -45,9 +45,9 @@ add_library(
 
 target_link_libraries(
   KinfuLargeScaleCPP ${PCL_LIBRARIES}
-  )
+)
 
-set(CUDA_NVCC_FLAGS "-gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52")
+set(CUDA_NVCC_FLAGS "-gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52")
 set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--ftz=true --prec-div=false --prec-sqrt=false")	
 set(CUDA_VERBOSE_BUILD OFF)
 cuda_add_library(KinfuLargeScaleCUDA
@@ -66,10 +66,22 @@ cuda_add_library(KinfuLargeScaleCUDA
   kinfu_large_scale/src/cuda/push.cu
   kinfu_large_scale/src/cuda/ray_caster.cu
   kinfu_large_scale/src/cuda/tsdf_volume.cu
-  )
+)
 
 target_link_libraries(
-  KinfuLargeScaleCUDA ${PCL_LIBRARIES}
-  )
+  KinfuLargeScaleCUDA
+  ${PCL_LIBRARIES}
+)
 
 set(KinfuLargeScale_LIBRARIES KinfuLargeScaleCPP KinfuLargeScaleCUDA PARENT_SCOPE)
+
+# installation
+# added by tongxi lou(lou@magazino.eu)
+# currently install to CATKIN_WS/lib, otherwise not recognised
+install(TARGETS KinfuLargeScaleCPP KinfuLargeScaleCUDA
+  ARCHIVE DESTINATION lib#/pcl_kinfu_large_scale#${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION lib#/pcl_kinfu_large_scale#${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION bin#/pcl_kinfu_large_scale#${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+## CAUTION: installing pcl from source may lead to ignorance of this subdirectory, so remove or disable
+## pcl::gpu on computer first

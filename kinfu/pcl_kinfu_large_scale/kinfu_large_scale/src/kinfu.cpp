@@ -85,7 +85,7 @@ pcl::gpu::kinfuLS::KinfuTracker::KinfuTracker (const Eigen::Vector3f &volume_siz
 
   tsdf_volume_ = TsdfVolume::Ptr ( new TsdfVolume(volume_resolution) );
   tsdf_volume_->setSize (volume_size);
-  
+
   shifting_distance_ = shiftingDistance;
 
   // set cyclical buffer values
@@ -692,7 +692,7 @@ pcl::gpu::kinfuLS::KinfuTracker::performPairWiseICP(const Intr cam_intrinsics, M
 
 bool
 pcl::gpu::kinfuLS::KinfuTracker::operator() (const DepthMap& depth_raw,const THint & hint)
-{ 
+{
   just_shifted_ = false;
 
   // Intrisics of the camera
