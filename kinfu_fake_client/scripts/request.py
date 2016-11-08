@@ -14,9 +14,9 @@ if __name__ == '__main__':
         print "running"
         msg = KinfuTsdfRequest()
         # headers
-#        msg.tsdf_header.request_type = KinfuRequestHeader.REQUEST_TYPE_GET_MESH
+        msg.tsdf_header.request_type = KinfuRequestHeader.REQUEST_TYPE_GET_MESH
 #        msg.tsdf_header.request_type = KinfuRequestHeader.REQUEST_TYPE_GET_TSDF
-        msg.tsdf_header.request_type = KinfuRequestHeader.REQUEST_TYPE_GET_CLOUD
+#        msg.tsdf_header.request_type = KinfuRequestHeader.REQUEST_TYPE_GET_CLOUD
 #        msg.tsdf_header.request_type = KinfuRequestHeader.REQUEST_TYPE_GET_VIEW_CLOUD
         msg.tsdf_header.request_id = id
         id += 1

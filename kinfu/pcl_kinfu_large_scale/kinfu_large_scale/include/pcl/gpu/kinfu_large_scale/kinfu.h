@@ -147,12 +147,22 @@ namespace pcl
           int
           rows ();
 
+          /**
+           * not part of pcl 1.8.0, might be written by the author of ros_kinfu as enhancement
+           * tongxi lou (lou@magazino.eu)
+           */
           void clearSphere(const Eigen::Vector3f & center,float radius);
 
           void clearBBox(const Eigen::Vector3f & min,const Eigen::Vector3f & max);
 
           struct THint
           {
+             /**
+             * looks like only HINT_TYPE_NONE and HINT_TYPE_FORCED are useful,
+             * HINT_TYPE_NONE uses purely tf from kinfu_large_scale
+             * HINT_TYPE_FORCED uses tf from request
+             * but till now just guesses --08.11.2016 tongxi lou lou@magazino.eu
+             */
             enum Type
             {
               HINT_TYPE_NONE = 0,
