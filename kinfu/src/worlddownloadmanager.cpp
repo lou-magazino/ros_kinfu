@@ -109,7 +109,10 @@ void WorldDownloadManager::respond(KinfuTracker * kinfu)
 {
   boost::mutex::scoped_lock wlock(m_kinfu_waiting_mutex);
   if (m_kinfu_waiting_count == 0)
+  {
+    ROS_WARN("nothing to do");
     return; // nothing to do
+  }
 
   m_kinfu = kinfu;
 
@@ -187,7 +190,10 @@ void WorldDownloadManager::pingWorker(kinfu_msgs::KinfuTsdfRequestConstPtr req)
   if (req->request_reset)
   {
     if (!lockKinfu())
+    {
+      ROS_WARN("ping not published");
       return;
+    }
 
     m_kinfu->reset();
 
@@ -207,7 +213,10 @@ void WorldDownloadManager::extractTsdfWorker(kinfu_msgs::KinfuTsdfRequestConstPt
 
   ROS_INFO("kinfu: Locking kinfu...");
   if (!lockKinfu())
+  {
+    ROS_WARN("shutting down or synchronization error, Tsdf not published");
     return; // shutting down or synchronization error
+  }
 
   TsdfCloud::Ptr cloud = req->request_reset ?
     m_kinfu->extractWorldAndReset() : m_kinfu->extractWorld();
@@ -241,7 +250,10 @@ void WorldDownloadManager::extractCloudWorker(kinfu_msgs::KinfuTsdfRequestConstP
 
   ROS_INFO("kinfu: Locking kinfu...");
   if (!lockKinfu())
+  {
+    ROS_WARN("shutting down or synchronization error, cloud not extracted");
     return; // shutting down or synchronization error
+  }
 
   ROS_INFO("kinfu: Locked.");
 
@@ -266,7 +278,10 @@ void WorldDownloadManager::extractCloudWorkerMCWithNormals(kinfu_msgs::KinfuTsdf
 
   ROS_INFO("kinfu: Marching cubes...");
   if (!marchingCubes(kinfu_cloud,meshes))
+  {
+    ROS_WARN("ERROR, kinfu_cloud not marched");
     return; // ERROR
+  }
 
   kinfu_cloud->clear(); // save some memory
 
@@ -328,7 +343,10 @@ void WorldDownloadManager::extractKnownWorker(kinfu_msgs::KinfuTsdfRequestConstP
 
   ROS_INFO("kinfu: Locking kinfu...");
   if (!lockKinfu())
+  {
+    ROS_WARN("shutting down or synchronization error, known worker not published");
     return; // shutting down or synchronization error
+  }
 
   ROS_INFO("kinfu: Locked.");
 
@@ -390,7 +408,10 @@ void WorldDownloadManager::extractMeshWorker(kinfu_msgs::KinfuTsdfRequestConstPt
 
   ROS_INFO("kinfu: Locking kinfu...");
   if (!lockKinfu())
+  {
+    ROS_WARN("shutting down or synchronization error, mesh not published");
     return; // shutting down or synchronization error
+  }
 
   ROS_INFO("kinfu: Locked.");
   pcl::PointCloud<pcl::PointXYZI>::Ptr kinfu_cloud = req->request_reset ?
@@ -404,7 +425,10 @@ void WorldDownloadManager::extractMeshWorker(kinfu_msgs::KinfuTsdfRequestConstPt
 
   ROS_INFO("kinfu: Marching cubes...");
   if (!marchingCubes(kinfu_cloud,meshes))
+  {
+    ROS_WARN("error marching cubes");
     return; // ERROR
+  }
 
   kinfu_cloud->clear(); // save some memory
 
@@ -485,7 +509,10 @@ void WorldDownloadManager::extractViewWorker(kinfu_msgs::KinfuTsdfRequestConstPt
 
   ROS_INFO("kinfu: Locking kinfu...");
   if (!lockKinfu())
+  {
+    ROS_WARN("shutting down or synchronization error, view not published");
     return; // shutting down or synchronization error
+  }
 
   initRaycaster(has_intrinsics,req->camera_intrinsics,
     req->request_bounding_box_view,req->bounding_box_view_min,req->bounding_box_view_max);
@@ -493,7 +520,10 @@ void WorldDownloadManager::extractViewWorker(kinfu_msgs::KinfuTsdfRequestConstPt
   const uint cols = has_intrinsics ? req->camera_intrinsics.size_y : m_kinfu->cols();
 
   if (!shiftNear(view_pose,req->tsdf_center_distance))
+  {
+    ROS_WARN("error shifting near");
     return; // error or shutting down
+  }
 
   ROS_INFO("kinfu: generating scene...");
   m_raycaster->run ( m_kinfu->volume (), view_pose, m_kinfu->getCyclicalBufferStructure () );
@@ -531,7 +561,10 @@ void WorldDownloadManager::extractViewCloudWorker(kinfu_msgs::KinfuTsdfRequestCo
 
   ROS_INFO("kinfu: Locking kinfu...");
   if (!lockKinfu())
+  {
+    ROS_WARN("shutting down or synchronization error, view cloud not published");
     return; // shutting down or synchronization error
+  }
 
   initRaycaster(has_intrinsics,req->camera_intrinsics,
     req->request_bounding_box_view,req->bounding_box_view_min,req->bounding_box_view_max);
@@ -540,7 +573,10 @@ void WorldDownloadManager::extractViewCloudWorker(kinfu_msgs::KinfuTsdfRequestCo
   const uint size = rows * cols;
 
   if (!shiftNear(view_pose,req->tsdf_center_distance))
+  {
+    ROS_WARN("error shifting near");
     return; // error or shutting down
+  }
 
   ROS_INFO("kinfu: generating scene...");
   m_raycaster->run ( m_kinfu->volume (), view_pose, m_kinfu->getCyclicalBufferStructure (), true);
@@ -675,7 +711,10 @@ void WorldDownloadManager::extractVoxelCountGenericWorker(kinfu_msgs::KinfuTsdfR
 
   ROS_INFO("kinfu: Locking kinfu...");
   if (!lockKinfu())
+  {
+    ROS_WARN("shutting down or synchronization error, voxel count... not published");
     return; // shutting down or synchronization error
+  }
 
   ROS_INFO("kinfu: sync points...");
   m_kinfu->syncKnownPoints();
