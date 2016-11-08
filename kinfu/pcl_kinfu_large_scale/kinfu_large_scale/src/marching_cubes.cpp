@@ -56,6 +56,7 @@ pcl::gpu::kinfuLS::MarchingCubes::MarchingCubes()
 
 pcl::gpu::kinfuLS::MarchingCubes::~MarchingCubes() {}
 
+// TODO this function returns empty triangle list
 DeviceArray<pcl::gpu::kinfuLS::MarchingCubes::PointType> 
 pcl::gpu::kinfuLS::MarchingCubes::run(const TsdfVolume& tsdf, DeviceArray<PointType>& triangles_buffer,
   DeviceArray<PointType> & normal_buffer,DeviceArray2D<int> last_data_transfer_matrix,int & data_transfer_finished)
