@@ -92,6 +92,7 @@ pcl::gpu::kinfuLS::MarchingCubes::run(const TsdfVolume& tsdf, DeviceArray<PointT
     
   pcl::device::kinfuLS::unbindTextures();
   return DeviceArray<PointType>(triangles_buffer.ptr(), total_vertices);
+//  return DeviceArray<PointType>(triangles_buffer.ptr(), 10000);
 }
 
 

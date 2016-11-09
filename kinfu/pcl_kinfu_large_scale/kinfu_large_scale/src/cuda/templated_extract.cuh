@@ -7,8 +7,8 @@ namespace pcl
   {
     namespace kinfuLS
     {
-      __device__ int global_count_subtraction = 0;
-      __device__ int overestimated_global_count = 0;
+      __device__ int count_subtraction_global = 0;
+      __device__ int count_overestimated_global = 0;
 
       struct FullScan6
       {
@@ -73,6 +73,7 @@ namespace pcl
         __device__ __forceinline__ void
         templatedExtract (EXTRACTOR extractor) const
         {
+          // z is 1 for and in block
           int x = threadIdx.x + blockIdx.x * CTA_SIZE_X;
           int y = threadIdx.y + blockIdx.y * CTA_SIZE_Y;
 
@@ -85,7 +86,9 @@ namespace pcl
             (x < rolling_buffer.voxels_size.x - EXTRACTOR::MIN_X_MARGIN) && (y < rolling_buffer.voxels_size.y - EXTRACTOR::MIN_Y_MARGIN);
           // fetch minimum z and distribute it to all threads
           if (ftid == 0)
+          {
             cta_buffer[0] = max(data_transfer_completion_matrix.ptr(blockIdx.y)[blockIdx.x], EXTRACTOR::MIN_Z_MARGIN);
+          }
           __syncthreads();
           int minimum_Z = cta_buffer[0];
 
@@ -117,10 +120,14 @@ namespace pcl
                 int t_offset = (1 << i);
                 int other_value;
                 if (ftid >= t_offset)
-                  other_value = cta_buffer[ftid - t_offset];
+                {
+                    other_value = cta_buffer[ftid - t_offset];
+                }
                 __syncthreads();
                 if (ftid >= t_offset)
-                  cta_buffer[ftid] = cta_buffer[ftid] + other_value;
+                {
+                    cta_buffer[ftid] = cta_buffer[ftid] + other_value;
+                }
                 __syncthreads();
               }
               int offset = ftid > 0 ? cta_buffer[ftid - 1] : 0; //How many crossings did we have before this thread ?
@@ -131,7 +138,7 @@ namespace pcl
               if (ftid == 0)
               {
                 // We use atomicAdd, so that threads do not collide
-                int old_global_count = atomicAdd (&overestimated_global_count, total_block_points);
+                int old_global_count = atomicAdd (&count_overestimated_global, total_block_points);
                 cta_buffer[0] = old_global_count;
               }
               __syncthreads();
@@ -143,7 +150,7 @@ namespace pcl
               if (full)
               {
                 if (ftid == 0)
-                  atomicAdd (&global_count_subtraction, total_block_points);
+                  atomicAdd (&count_subtraction_global, total_block_points);
                 break;
               }
 
@@ -163,8 +170,9 @@ namespace pcl
 
           // Save the z, so we can restart next execution
           if (ftid == 0)
+          {
             data_transfer_completion_matrix.ptr(blockIdx.y)[blockIdx.x] = z;
-
+          }
         } // templated_extract
 
         __device__ __forceinline__ void
@@ -212,8 +220,8 @@ namespace pcl
           // overestimated,subtraction are both "set" to 0 at the end of this function
           // degug this part
           int overestimated,subtraction;
-          cudaSafeCall ( cudaMemcpyFromSymbol (&overestimated, overestimated_global_count, sizeof(overestimated)) );
-          cudaSafeCall ( cudaMemcpyFromSymbol (&subtraction, global_count_subtraction, sizeof(subtraction)) );
+          cudaSafeCall ( cudaMemcpyFromSymbol (&overestimated, count_overestimated_global, sizeof(int)) );
+          cudaSafeCall ( cudaMemcpyFromSymbol (&subtraction, count_subtraction_global, sizeof(int)) );
           data_transfer_finished = !subtraction;
 
           return overestimated - subtraction;
@@ -222,8 +230,8 @@ namespace pcl
         static void init_globals()
         {
           const int ZERO = 0;
-          cudaSafeCall ( cudaMemcpyToSymbol (global_count_subtraction, &ZERO, sizeof(ZERO)) );
-          cudaSafeCall ( cudaMemcpyToSymbol (overestimated_global_count, &ZERO, sizeof(ZERO)) );
+          cudaSafeCall ( cudaMemcpyToSymbol (count_subtraction_global, &ZERO, sizeof(int)) );
+          cudaSafeCall ( cudaMemcpyToSymbol (count_overestimated_global, &ZERO, sizeof(int)) );
         }
       };
     }

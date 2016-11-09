@@ -295,9 +295,9 @@ namespace pcl
       {
         FullScan6 fs;
         fs.volume = volume;
-        fs.cell_size.x = volume_size.x / buffer->voxels_size.x;
-        fs.cell_size.y = volume_size.y / buffer->voxels_size.y;
-        fs.cell_size.z = volume_size.z / buffer->voxels_size.z;
+        fs.cell_size.x = volume_size.x / (float)buffer->voxels_size.x;
+        fs.cell_size.y = volume_size.y / (float)buffer->voxels_size.y;
+        fs.cell_size.z = volume_size.z / (float)buffer->voxels_size.z;
         fs.output_xyz = output_xyz;
         fs.output_intensity = output_intensities;
         fs.data_transfer_completion_matrix = last_data_transfer_matrix;

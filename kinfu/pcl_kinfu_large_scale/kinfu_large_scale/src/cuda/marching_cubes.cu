@@ -276,20 +276,20 @@ namespace pcl
         FullScan6 tg;
 
         tg.volume = volume;
-        tg.cell_size.x = buffer.volume_size.x / buffer.voxels_size.x;
-        tg.cell_size.y = buffer.volume_size.y / buffer.voxels_size.y;
-        tg.cell_size.z = buffer.volume_size.z / buffer.voxels_size.z;
+        tg.cell_size.x = buffer.volume_size.x / (float)buffer.voxels_size.x;
+        tg.cell_size.y = buffer.volume_size.y / (float)buffer.voxels_size.y;
+        tg.cell_size.z = buffer.volume_size.z / (float)buffer.voxels_size.z;
         tg.output_xyz = output;
         tg.output_normals = normals;
         tg.data_transfer_completion_matrix = last_data_transfer_matrix;
         tg.rolling_buffer = buffer;
 
-        dim3 block (FullScan6::CTA_SIZE_X,FullScan6::CTA_SIZE_Y);
-        dim3 grid (divUp (VOLUME_X, block.x), divUp (VOLUME_Y, block.y));
+        dim3 block (FullScan6::CTA_SIZE_X, FullScan6::CTA_SIZE_Y, 1);
+        dim3 grid (divUp (VOLUME_X, block.x), divUp (VOLUME_Y, block.y), 1);
 
         tg.init_globals();
 
-        trianglesGeneratorWithNormalsKernel<<<grid, block>>>(tg,tranc_dist);
+        trianglesGeneratorWithNormalsKernel<<<grid, block>>>(tg, tranc_dist);
         cudaSafeCall ( cudaGetLastError () );
         cudaSafeCall (cudaDeviceSynchronize ());
 
