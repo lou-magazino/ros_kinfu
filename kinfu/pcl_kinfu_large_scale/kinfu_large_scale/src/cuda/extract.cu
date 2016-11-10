@@ -68,7 +68,7 @@ namespace pcl
           bool in_black_zone =
             ( (x >= minBounds.x && x <= maxBounds.x) ||
               (y >= minBounds.y && y <= maxBounds.y) ||
-              ( z >= minBounds.z && z <= maxBounds.z) ) ;
+              (z >= minBounds.z && z <= maxBounds.z) ) ;
           int local_count = 0;
 
           if (in_black_zone)
@@ -571,21 +571,19 @@ namespace pcl
           float c =  point.z/ cell_size.z - (g.z + 0.5f);
   */
           //NEW CODE
-                  float a = point.x/ cell_size.x - (g.x + 0.5f); if (a<0) { g.x--; a+=1.0f; };
+          float a = point.x/ cell_size.x - (g.x + 0.5f); if (a<0) { g.x--; a+=1.0f; };
           float b = point.y/ cell_size.y - (g.y + 0.5f); if (b<0) { g.y--; b+=1.0f; };
           float c = point.z/ cell_size.z - (g.z + 0.5f); if (c<0) { g.z--; c+=1.0f; };
 
-          float res = (1 - a) * ( 
-                                  (1 - b) * ( readTsdf (g.x + 0, g.y + 0, g.z + 0) * (1 - c) +
-                                              readTsdf (g.x + 0, g.y + 0, g.z + 1) *    c  )
-                                          + b * ( readTsdf (g.x + 0, g.y + 1, g.z + 0) * (1 - c) +
-                                                  readTsdf (g.x + 0, g.y + 1, g.z + 1) *    c  )
-                          ) + a * (
-                                  (1 - b) * ( readTsdf (g.x + 1, g.y + 0, g.z + 0) * (1 - c) +
-                                              readTsdf (g.x + 1, g.y + 0, g.z + 1) *    c  )
-                                          + b * ( readTsdf (g.x + 1, g.y + 1, g.z + 0) * (1 - c) +
-                                                  readTsdf (g.x + 1, g.y + 1, g.z + 1) *    c  )
-                          );
+          // bilinear interpolation
+          float res = (1 - a) * ( (1 - b) * ( readTsdf (g.x    , g.y    , g.z    ) * (1.0f - c) +
+                                              readTsdf (g.x    , g.y    , g.z + 1) *  c       )
+                                 + b      * ( readTsdf (g.x    , g.y + 1, g.z    ) * (1.0f - c) +
+                                              readTsdf (g.x    , g.y + 1, g.z + 1) *  c       ) )
+                     + a      * ( (1 - b) * ( readTsdf (g.x + 1, g.y    , g.z    ) * (1.0f - c) +
+                                              readTsdf (g.x + 1, g.y    , g.z + 1) *  c       )
+                                 + b      * ( readTsdf (g.x + 1, g.y + 1, g.z    ) * (1.0f - c) +
+                                              readTsdf (g.x + 1, g.y + 1, g.z + 1) *  c       ) );
 
           return res;
         }
