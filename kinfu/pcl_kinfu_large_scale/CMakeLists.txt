@@ -1,5 +1,9 @@
+option(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 find_package(CUDA REQUIRED)
 message(STATUS "kinfu: CUDA ${CUDA_VERSION} found.")
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/remove_vtk_definitions_hack.cmake)
+REMOVE_VTK_DEFINITIONS()
 
 set(KinfuLargeScale_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}/containers/include
