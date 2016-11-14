@@ -18,9 +18,5 @@
     <param name="depth_height" type="int" value="480" />
     <param name="depth_width" type="int" value="640" />
   </node>
-
-  <node pkg="kinfu_output" type="kinfu_output" name="$(arg name)_output" output="screen">
-    <param name="kinfu_response_topic" value="$(arg response_topic)" />
-  </node>
 </launch>
 
